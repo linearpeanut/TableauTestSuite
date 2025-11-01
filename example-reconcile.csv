@@ -1,0 +1,6 @@
+name,worksheet,dimension,dimensionValue,measure,expectedValue,tolerance
+Total Revenue Check,Revenue Data,,Grand Total,Total Revenue,1000000,5000
+North America Revenue,Revenue Data,Region,North America,Total Revenue,250000,2500
+Product A Sales,Sales Analysis,Product,Widget A,Total Sales,150000,1000
+Margin Check Q4,Margin Analysis,,Grand Total,Gross Margin,500000,5000
+Customer Count,Customer Summary,,Grand Total,Active Customers,5000,100
