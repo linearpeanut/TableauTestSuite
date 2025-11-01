@@ -1,55 +1,64 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Tableau Test Suite Configuration Schema",
-  "description": "Configuration schema for the Tableau Test Suite bookmarklet (v0.1-alpha)",
+  "description": "Configuration schema for the Tableau Test Suite bookmarklet (v0.2-alpha)",
   "type": "object",
   "properties": {
     "version": {
       "type": "string",
       "description": "Configuration version (should match bookmarklet version)",
-      "example": "0.1-alpha"
+      "example": "0.2-alpha"
+    },
+    "ui": {
+      "type": "object",
+      "description": "User interface customization settings",
+      "properties": {
+        "panel": {
+          "type": "object",
+          "properties": {
+            "width": { "type": "string", "default": "520px" },
+            "maxHeight": { "type": "string", "default": "90vh" },
+            "top": { "type": "string", "default": "10px" },
+            "right": { "type": "string", "default": "10px" },
+            "zIndex": { "type": "number", "default": 2147483647 },
+            "fontFamily": { "type": "string", "default": "system-ui,Segoe UI,Roboto,Arial,sans-serif" }
+          }
+        },
+        "colors": {
+          "type": "object",
+          "properties": {
+            "background": { "type": "string", "default": "#0b1220" },
+            "foreground": { "type": "string", "default": "#e6eef8" },
+            "border": { "type": "string", "default": "#2b3950" },
+            "accent": { "type": "string", "default": "#1860d6" },
+            "success": { "type": "string", "default": "#60d394" },
+            "error": { "type": "string", "default": "#ff9b9b" },
+            "warning": { "type": "string", "default": "#f6c86b" },
+            "info": { "type": "string", "default": "#8bc8ff" }
+          }
+        }
+      }
     },
     "reconciliation": {
       "type": "object",
-      "description": "Reconciliation settings for spreadsheet-based data validation",
       "properties": {
-        "csvText": {
-          "type": "string",
-          "description": "CSV content pasted directly (takes priority over csvUrl)",
-          "example": "dashboard,dimension,measure,expectedValue\nMy Dashboard,Region,Sales,12345"
-        },
-        "csvUrl": {
-          "type": "string",
-          "description": "Public CSV URL (e.g., published Google Sheet)",
-          "example": "https://docs.google.com/spreadsheets/d/ABC123/export?format=csv"
-        },
-        "csvDelimiter": {
-          "type": "string",
-          "description": "CSV delimiter character",
-          "default": ",",
-          "example": ","
-        },
-        "dimensionCaseSensitive": {
-          "type": "boolean",
-          "description": "Whether dimension matching is case-sensitive",
-          "default": false
-        },
-        "numericTolerance": {
-          "type": "number",
-          "description": "Tolerance for numeric value comparison (e.g., 0.0001 for 0.01% tolerance)",
-          "default": 0.0001
-        }
+        "csvText": { "type": "string" },
+        "csvUrl": { "type": "string" },
+        "csvDelimiter": { "type": "string", "default": "," },
+        "dimensionCaseSensitive": { "type": "boolean", "default": false },
+        "numericTolerance": { "type": "number", "default": 0.0001 },
+        "maxDomSearchElements": { "type": "number", "default": 30 },
+        "maxPreviewRows": { "type": "number", "default": 200 }
       }
     },
     "rules": {
       "type": "object",
-      "description": "Customizable test thresholds and parameters",
       "properties": {
         "performance": {
           "type": "object",
           "properties": {
-            "maxLoadMs": { "type": "number", "default": 5000, "description": "Maximum acceptable page load time in milliseconds" },
-            "maxDomReadyMs": { "type": "number", "default": 3000, "description": "Maximum acceptable DOM ready time in milliseconds" },
+            "maxLoadMs": { "type": "number", "default": 5000 },
+            "maxDomReadyMs": { "type": "number", "default": 3000 },
             "enabled": { "type": "boolean", "default": true }
           }
         },
@@ -60,17 +69,30 @@
             "enabled": { "type": "boolean", "default": true }
           }
         },
+        "visual": {
+          "type": "object",
+          "properties": {
+            "maxFonts": { "type": "number", "default": 5 },
+            "enabled": { "type": "boolean", "default": true }
+          }
+        },
         "colorCount": {
           "type": "object",
           "properties": {
-            "maxUnique": { "type": "number", "default": 50, "description": "Maximum unique colors allowed" },
+            "maxUnique": { "type": "number", "default": 50 },
             "enabled": { "type": "boolean", "default": true }
           }
         },
         "contrastToleranceIssues": {
           "type": "object",
           "properties": {
-            "maxIssues": { "type": "number", "default": 10, "description": "Maximum acceptable color contrast issues" },
+            "maxIssues": { "type": "number", "default": 10 },
+            "enabled": { "type": "boolean", "default": true }
+          }
+        },
+        "checkTableauApi": {
+          "type": "object",
+          "properties": {
             "enabled": { "type": "boolean", "default": true }
           }
         },
@@ -80,12 +102,29 @@
             "requireAltText": { "type": "boolean", "default": true },
             "enabled": { "type": "boolean", "default": true }
           }
+        },
+        "security": {
+          "type": "object",
+          "properties": {
+            "sensitiveTerms": {
+              "type": "array",
+              "items": { "type": "string" },
+              "default": ["ssn", "password", "credit card", "api key", "secret", "token", "bearer"]
+            },
+            "enabled": { "type": "boolean", "default": true }
+          }
+        },
+        "selectors": {
+          "type": "object",
+          "properties": {
+            "dashboards": { "type": "string", "default": "[data-tb-test-id*=\"dashboard\"],.tableau-dashboard,.tab-dashboard" },
+            "tables": { "type": "string", "default": "table,[role=\"table\"],.tabular-data" }
+          }
         }
       }
     },
     "testToggles": {
       "type": "object",
-      "description": "Enable/disable test categories",
       "properties": {
         "deployment": { "type": "boolean", "default": true },
         "version": { "type": "boolean", "default": true },
@@ -96,6 +135,14 @@
         "accessibility": { "type": "boolean", "default": true },
         "security": { "type": "boolean", "default": true },
         "reconciliation": { "type": "boolean", "default": true }
+      }
+    },
+    "templates": {
+      "type": "object",
+      "properties": {
+        "sampleReconciliationCSV": { "type": "string", "default": "dashboard,dimension,measure,expectedValue\nMy Dashboard,Region,Sales,12345\nMy Dashboard,Region,Profit,2345" },
+        "exportFilenamePrefix": { "type": "string", "default": "tableau-test-report-" },
+        "configFilenamePrefix": { "type": "string", "default": "tts-config-" }
       }
     }
   }
