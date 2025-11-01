@@ -1,4 +1,4 @@
-dashboard,dimension,measure,expectedValue,tolerance
-My Dashboard,Region A,Sales,12345,0.5
-My Dashboard,Region B,Profit,2345,1.0
-My Dashboard,All,Revenue,56789,0.25
+name,worksheet,dimension,dimensionValue,measure,expectedValue,tolerance
+Revenue Check,Revenue Data,Region,North America,Total Revenue,1500000,50000
+Customer Count,Customer Summary,Status,Active,Customer Count,5000,100
+Average Order Value,Sales Analysis,Product Category,Electronics,Average Order Value,250,10
