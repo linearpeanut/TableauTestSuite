@@ -1,0 +1,102 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Tableau Test Suite Configuration Schema",
+  "description": "Configuration schema for the Tableau Test Suite bookmarklet (v0.1-alpha)",
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Configuration version (should match bookmarklet version)",
+      "example": "0.1-alpha"
+    },
+    "reconciliation": {
+      "type": "object",
+      "description": "Reconciliation settings for spreadsheet-based data validation",
+      "properties": {
+        "csvText": {
+          "type": "string",
+          "description": "CSV content pasted directly (takes priority over csvUrl)",
+          "example": "dashboard,dimension,measure,expectedValue\nMy Dashboard,Region,Sales,12345"
+        },
+        "csvUrl": {
+          "type": "string",
+          "description": "Public CSV URL (e.g., published Google Sheet)",
+          "example": "https://docs.google.com/spreadsheets/d/ABC123/export?format=csv"
+        },
+        "csvDelimiter": {
+          "type": "string",
+          "description": "CSV delimiter character",
+          "default": ",",
+          "example": ","
+        },
+        "dimensionCaseSensitive": {
+          "type": "boolean",
+          "description": "Whether dimension matching is case-sensitive",
+          "default": false
+        },
+        "numericTolerance": {
+          "type": "number",
+          "description": "Tolerance for numeric value comparison (e.g., 0.0001 for 0.01% tolerance)",
+          "default": 0.0001
+        }
+      }
+    },
+    "rules": {
+      "type": "object",
+      "description": "Customizable test thresholds and parameters",
+      "properties": {
+        "performance": {
+          "type": "object",
+          "properties": {
+            "maxLoadMs": { "type": "number", "default": 5000, "description": "Maximum acceptable page load time in milliseconds" },
+            "maxDomReadyMs": { "type": "number", "default": 3000, "description": "Maximum acceptable DOM ready time in milliseconds" },
+            "enabled": { "type": "boolean", "default": true }
+          }
+        },
+        "images": {
+          "type": "object",
+          "properties": {
+            "allowBroken": { "type": "boolean", "default": false },
+            "enabled": { "type": "boolean", "default": true }
+          }
+        },
+        "colorCount": {
+          "type": "object",
+          "properties": {
+            "maxUnique": { "type": "number", "default": 50, "description": "Maximum unique colors allowed" },
+            "enabled": { "type": "boolean", "default": true }
+          }
+        },
+        "contrastToleranceIssues": {
+          "type": "object",
+          "properties": {
+            "maxIssues": { "type": "number", "default": 10, "description": "Maximum acceptable color contrast issues" },
+            "enabled": { "type": "boolean", "default": true }
+          }
+        },
+        "accessibility": {
+          "type": "object",
+          "properties": {
+            "requireAltText": { "type": "boolean", "default": true },
+            "enabled": { "type": "boolean", "default": true }
+          }
+        }
+      }
+    },
+    "testToggles": {
+      "type": "object",
+      "description": "Enable/disable test categories",
+      "properties": {
+        "deployment": { "type": "boolean", "default": true },
+        "version": { "type": "boolean", "default": true },
+        "visual": { "type": "boolean", "default": true },
+        "data": { "type": "boolean", "default": true },
+        "functional": { "type": "boolean", "default": true },
+        "technical": { "type": "boolean", "default": true },
+        "accessibility": { "type": "boolean", "default": true },
+        "security": { "type": "boolean", "default": true },
+        "reconciliation": { "type": "boolean", "default": true }
+      }
+    }
+  }
+}

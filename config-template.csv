@@ -1,0 +1,5 @@
+dashboard,dimension,measure,expectedValue
+My Dashboard,Region,Sales,12345
+My Dashboard,Region,Profit,2345
+Revenue Dashboard,Product Category,Revenue,45678
+Revenue Dashboard,Product Category,Cost,12000
