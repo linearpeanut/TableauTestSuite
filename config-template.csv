@@ -1,6 +1,4 @@
-dashboard,dimension,measure,expectedValue,tolerancePct
-Sales Dashboard,North Region,Total Sales,125000,1.0
-Sales Dashboard,South Region,Total Sales,98500,1.0
-Revenue Dashboard,Q1 2025,Revenue,450000,0.5
-Revenue Dashboard,Q1 2025,Profit Margin,0.25,2.0
-Customer Dashboard,Active Customers,Count,5432,0.1
+dashboard,dimension,measure,expectedValue,tolerance
+My Dashboard,Region A,Sales,12345,0.5
+My Dashboard,Region B,Profit,2345,1.0
+My Dashboard,All,Revenue,56789,0.25

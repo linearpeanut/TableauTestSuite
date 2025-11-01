@@ -1,172 +1,188 @@
-# Tableau Test Suite v0.1 Alpha
-
-**Client-side Tableau dashboard validation and reconciliation bookmarklet**
+# Tableau Test Suite — Bookmarklet v0.1 Alpha
 
 ## Overview
 
-Tableau Test Suite is a lightweight, zero-dependency bookmarklet that enables:
+A single-file vanilla JavaScript bookmarklet for automated Tableau dashboard validation and reconciliation.
 
-- **Reconciliation Testing**: Compare dashboard values against expected values from CSV/XLSX configs
-- **Custom Rules**: Edit JSON rules to customize test behavior and tolerances
-- **Configuration Management**: Import/export reconciliation configs in CSV or XLSX format
-- **JSON Reports**: Export detailed test results for audits and compliance
-- **localStorage Persistence**: All config and rules saved locally in the browser
-
-## Quick Start
-
-### Installation
-
-1. Visit the **auto-installer.html** in your browser
-2. Click "Copy Bookmarklet"
-3. Create a new browser bookmark (Ctrl+D / Cmd+D)
-4. Paste the code into the bookmark URL field
-5. Name it "Tableau Test Suite"
-6. Save and use on any Tableau dashboard
-
-### Usage
-
-1. Open a Tableau dashboard
-2. Click your "Tableau Test Suite" bookmark
-3. A panel appears on the right side
-4. Use the tabs to:
-   - **Run**: Execute all tests or reconciliation only
-   - **Config**: Import CSV/XLSX reconciliation data
-   - **Rules**: Edit JSON test rules
-   - **Reconcile**: Run reconciliation and view results
-   - **Report**: View and export JSON reports
-   - **Help**: Quick reference
-
-## Configuration Format
-
-### CSV Template
-
-```csv
-dashboard,dimension,measure,expectedValue,tolerancePct
-Sales Dashboard,North Region,Total Sales,125000,1.0
-Revenue Dashboard,Q1 2025,Revenue,450000,0.5
-```
-
-**Columns:**
-- `dashboard`: Dashboard name (auto-detected if empty)
-- `dimension`: Dimension/filter value
-- `measure`: Measure/metric name
-- `expectedValue`: Expected numeric value
-- `tolerancePct`: Tolerance percentage (optional, defaults to 0.5%)
-
-### XLSX Support
-
-The bookmarklet automatically loads SheetJS from CDN when you select an XLSX file. Same column structure as CSV.
-
-## Features
-
-✓ **Vanilla JavaScript** - No React, no build tools required
-✓ **CSV & XLSX Support** - Flexible configuration import
-✓ **Tolerance-Based Matching** - Configurable percentage tolerances
-✓ **Custom Rules** - Edit JSON to customize test behavior
-✓ **JSON Export** - Detailed reports for compliance and audits
-✓ **localStorage Persistence** - Config saved between sessions
-✓ **Zero External Dependencies** - Except optional SheetJS for XLSX
-✓ **Minified Bookmarklet** - Single-line, copy-paste ready
+**Key Features:**
+- **85+ automated tests** across 6 categories (Visual, Data Quality, Functional, Technical, Accessibility, Security)
+- **Spreadsheet reconciliation** — compare dashboard values against CSV/XLSX configs
+- **Editable rules** — customize test thresholds and enable/disable individual tests
+- **Zero dependencies** — vanilla JS only; SheetJS loaded on-demand for XLSX support
+- **Persistent config** — all settings stored in browser localStorage
+- **One-click installer** — right-click bookmark link for easy setup
 
 ## Files
 
-- **bookmarklet-readable.js** - Full source code with comments (development)
-- **bookmarklet-minified.txt** - Minified single-line bookmarklet (production)
-- **auto-installer.html** - One-click installer page
-- **config-template.csv** - Example reconciliation configuration
-- **README.md** - This file
+| File | Purpose |
+|------|----------|
+| `bookmarklet_readable.js` | Readable source (for editing and reference) |
+| `bookmarklet_minified.js` | Single-line minified bookmarklet (copy into bookmark URL) |
+| `auto-installer.html` | One-click installer page with copy-to-clipboard |
+| `config-template.csv` | CSV template for reconciliation configs |
+| `README.md` | This documentation |
 
-## Configuration Rules
+## Installation
 
-Edit the Rules tab to customize test behavior:
+### Option 1: Auto-Installer (Recommended)
+
+1. Open `auto-installer.html` in your browser (or host it on a web server)
+2. Right-click the **"Install Tableau Test Suite"** link and choose **"Add to favorites"** / **"Bookmark link"**
+3. Or drag the link to your bookmarks bar
+
+### Option 2: Manual Install
+
+1. Create a new bookmark in your browser (Ctrl+D or Cmd+D)
+2. Copy the entire contents of `bookmarklet_minified.js`
+3. Paste into the bookmark URL field
+4. Save with name "Tableau Test Suite" or similar
+
+## Usage
+
+### Running Tests
+
+1. Navigate to a Tableau dashboard
+2. Click the bookmarklet from your bookmarks bar
+3. The **TTS panel** appears (top-right corner)
+4. Click **"Run Tests"** to execute the suite
+5. Results appear in the **Tests** tab
+
+### Reconciliation (Spreadsheet Comparison)
+
+1. In the **Reconcile** tab:
+   - **Paste CSV** directly into the text area, OR
+   - **Upload CSV/XLSX** file
+2. Click **"Parse & Save"**
+3. Click **"Run Reconciliation"** to compare dashboard values against your config
+4. Results show match/mismatch for each row
+
+**CSV Format:**
+```
+dashboard,dimension,measure,expectedValue,tolerance
+My Dashboard,Region A,Sales,12345,0.5
+My Dashboard,Region B,Profit,2345,1.0
+```
+
+- `dashboard` — friendly name (optional)
+- `dimension` — grouping label (optional)
+- `measure` — measure name to match on page (required)
+- `expectedValue` — numeric expected value
+- `tolerance` — percentage tolerance (e.g., 0.5 = ±0.5%); uses global default if omitted
+
+### Configuration & Rules
+
+1. In the **Config** tab:
+   - Edit **Global Rules** (JSON) — adjust thresholds like `maxLoadTimeMs`, `globalTolerancePercent`
+   - **Import/Export** full config for sharing standard rule sets
+2. In the **Tests** tab:
+   - Enable/disable individual tests via checkboxes
+   - Settings persist in localStorage
+
+### Exporting Reports
+
+1. Click **"Export Last Report"** in the **Export** tab
+2. A JSON file downloads with full test results, timestamps, and metadata
+
+## Configuration Details
+
+### Default Rules
 
 ```json
 {
-  "enableVisualChecks": true,
-  "enableDataChecks": true,
-  "toleranceDefaultPct": 0.5
+  "version": "0.1",
+  "testsEnabled": {},
+  "rules": {
+    "globalTolerancePercent": 0.5,
+    "maxLoadTimeMs": 2000,
+    "contrastMin": 3.0
+  },
+  "reconciliation": {
+    "sourceType": "paste",
+    "rawText": "",
+    "records": []
+  }
 }
 ```
 
-## Reconciliation Logic
+### Storage
 
-For each config row:
+- **Key:** `tts:config` (localStorage)
+- **Key:** `tts:report:*` (timestamped reports)
+- All data persists in the browser; no external transmission
 
-1. Extract the expected value from the config
-2. Search the dashboard DOM for matching dimension + measure text
-3. Extract the actual numeric value from nearby elements
-4. Compare: `|actual - expected| / |expected| * 100 <= tolerancePct`
-5. Report: MATCH, MISMATCH, NOT_FOUND, or INVALID_EXPECTED
+## Test Categories
 
-## Report Export
+| Category | Tests | Examples |
+|----------|-------|----------|
+| **Performance** | 15+ | Page load time, DOM ready, image loading |
+| **Visual** | 15+ | Font consistency, color palette, margin alignment |
+| **Data Quality** | 15+ | Null values, error detection, filter config |
+| **Functional** | 15+ | Export buttons, links, interactive elements |
+| **Accessibility** | 15+ | Alt text, ARIA labels, heading structure, contrast |
+| **Security** | 15+ | HTTPS usage, sensitive data, iframe sandboxing |
 
-JSON reports include:
+## SheetJS (XLSX Support)
 
-```json
-{
-  "generatedAt": "2025-11-01T10:30:00.000Z",
-  "summary": {
-    "summaryText": "5/5 reconciliation matches",
-    "totalChecks": 5,
-    "passed": 5,
-    "failed": 0
-  },
-  "reconcile": {
-    "total": 5,
-    "matches": 5,
-    "details": [...]
-  },
-  "rules": {...},
-  "version": "0.1.0"
-}
-```
+- Loaded automatically from CDN when user uploads an XLSX file
+- URL: `https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js`
+- No external dependencies otherwise
+
+## Security & Privacy
+
+- **Runs entirely in the browser** — no data transmitted externally
+- **localStorage only** — config and reports stored locally
+- **No tracking** — no analytics or telemetry
+- **CORS-safe** — avoids cross-origin requests
+
+## Extending Tests
+
+To add custom tests:
+
+1. Edit `bookmarklet_readable.js`
+2. Add a new test using `registerTest(id, name, category, runFn)`
+3. Example:
+   ```javascript
+   registerTest('custom_check', 'My Custom Check', 'Visual', function(ctx) {
+     var passed = document.querySelectorAll('.my-element').length > 0;
+     return { passed: passed, info: { found: passed } };
+   });
+   ```
+4. Minify and update the bookmarklet
+
+## Repository & Permissions
+
+**This repository is read-only.** Only the repository owner (linearpeanut) can push changes.
+
+### Branch Protection (main)
+
+- Requires pull requests for all changes
+- Status checks required
+- Restricted push access (owner only)
 
 ## Troubleshooting
 
-**Bookmarklet won't run?**
-- Ensure you copied the entire code starting with `javascript:`
-- Some browsers block bookmarklets on certain sites for security
-- Try refreshing the page and clicking again
+| Issue | Solution |
+|-------|----------|
+| Panel doesn't appear | Check browser console for errors; try refreshing page |
+| Tests fail unexpectedly | Verify dashboard is fully loaded; check browser console |
+| XLSX upload fails | Ensure file is valid .xlsx; check browser download permissions |
+| Reconciliation finds no values | Heuristic matching may fail on complex layouts; try manual inspection |
+| Bookmarklet won't run | Ensure full code copied; some browsers block bookmarklets on certain sites |
 
-**XLSX not loading?**
-- The bookmarklet loads SheetJS from CDN on demand
-- Ensure you have internet access
-- Check browser console for errors
+## Next Steps
 
-**Values not matching?**
-- Verify dashboard, dimension, and measure names exactly match the dashboard
-- Check tolerance percentage settings
-- Review the reconciliation details for NOT_FOUND status
-
-**Config not persisting?**
-- localStorage is saved per domain
-- Clearing browser data will reset config
-- Export reports regularly for backup
-
-## Development
-
-To extend the bookmarklet:
-
-1. Edit `bookmarklet-readable.js`
-2. Add new test functions or reconciliation logic
-3. Minify using a tool like [terser](https://terser.org/)
-4. Update `bookmarklet-minified.txt`
-5. Test thoroughly on various dashboards
-
-## Version History
-
-### v0.1.0 (Alpha)
-- Initial release
-- CSV/XLSX config import
-- Reconciliation testing
-- Custom rules (JSON editable)
-- JSON report export
-- localStorage persistence
+- [ ] Add Tableau API integration for direct measure extraction
+- [ ] Improve reconciliation heuristics (CSS/XPath matching)
+- [ ] Add rule templates for common workflows (Finance, Ops, etc.)
+- [ ] Provide hosted installer page
+- [ ] Add browser extension version
 
 ## License
 
-Private repository - Read-only for end users.
+Private repository. All rights reserved.
 
-## Support
+---
 
-For issues or feature requests, contact the repository owner.
+**Version:** 0.1 Alpha  
+**Author:** linearpeanut  
+**Last Updated:** 2025-11-01
